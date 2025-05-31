@@ -34,7 +34,7 @@ class StoryOwner(StoryInfoOwner):
 
 
 class StoryCreate(BaseModel):
-    title: str = Field(..., min_length=1, min_length=1, max_length=255)
+    title: str = Field(..., min_length=1, max_length=255)
     subtitle: OptionalStr = Field(default=None, min_length=1, max_length=255)
     content: OptionalStr = Field(default=None, min_length=1)
 

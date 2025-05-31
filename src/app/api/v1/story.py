@@ -1,49 +1,32 @@
 from fastapi import APIRouter, Body, Path
+from typing import Union, List
+
+from schemas.story import StoryCreate, StoryUpdate, StoryInfoPublic, StoryInfoOwner, StoryPublic, StoryOwner
 
 
-router = APIRouter(prefix='/users')
+router = APIRouter(prefix='/stories', tags=["Stories"])
 
 
 @router.get("/")
-def list_stories():
+def list_stories() -> List[StoryInfoPublic]:
     pass
 
 
 @router.get("/{story_id}")
-def get_story(story_id: int = Path(...)):
+def get_story(story_id: int = Path(...)) -> Union[StoryPublic, StoryOwner]:
     pass
 
 
 @router.post("/")
-def create_story(story):
+def create_story(story: StoryCreate) -> StoryInfoOwner:
     pass
 
 
 @router.patch("/{story_id}")
-def update_story(story_id: int, update):
+def update_story(story_id: int, update: StoryUpdate) -> StoryInfoOwner:
     pass
 
 
 @router.delete("/{story_id}")
 def delete_story(story_id: int):
-    pass
-
-
-@router.get("/{story_id}/publish")
-def get_publish_status(story_id: int):
-    pass
-
-
-@router.put("/{story_id}/publish")
-def publish_story(story_id: int, settings = Body(...)):
-    pass
-
-
-@router.post("/{story_id}/publish")
-def trigger_publish_action(story_id: int):
-    pass
-
-
-@router.delete("/{story_id}/publish")
-def unpublish_story(story_id: int):
     pass

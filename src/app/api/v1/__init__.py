@@ -1,5 +1,8 @@
 from fastapi import APIRouter
-from api.v1 import auth
+from api.v1 import auth, story, publication
 
 router = APIRouter(prefix='/v1')
+
 router.include_router(auth.router)
+router.include_router(story.router)
+router.include_router(publication.router)
