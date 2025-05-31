@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Body, Path,Request
+from fastapi import APIRouter, Path,Request
 from typing import Union, List
 from services.story import create_story, get_story
 

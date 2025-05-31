@@ -27,5 +27,43 @@ def get_story_by_id(story_id: str):
             return curr.fetchone()
 
 
+def update_story_by_id(story_id: UUID, title: Optional[str], subtitle: Optional[str], content: Optional[str]):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            fields = []
+            values = []
 
+            if title is not None:
+                fields.append("title = %s")
+                values.append(title)
+
+            if subtitle is not None:
+                fields.append("subtitle = %s")
+                values.append(subtitle)
+
+            if content is not None:
+                fields.append("content = %s")
+                values.append(content)
+
+            if len(fields) == 0:
+                return
+
+            fields.append("updated_at = CURRENT_TIMESTAMP")
+
+            query = f"""
+                UPDATE stories
+                SET {', '.join(fields)}
+                WHERE id = %s
+                RETURNING id, title, subtitle, content, author_id, is_published, published_at, created_at, updated_at
+            """
+
+            values.append(str(story_id))
+            curr.execute(query, values)
+            return curr.fetchone()
+
+
+def delete_story_by_id(story_id):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("DELETE FROM stories WHERE id = %s", (str(story_id),))
 
