@@ -67,8 +67,11 @@ def login(request: Request, response: Response, user_credentials: UserCredential
 
 
 @router.get("/login", status_code=status.HTTP_200_OK)
-def is_logged_in() -> LoginStatus:
-    pass
+@handle_errors
+def is_logged_in(request: Request) -> LoginStatus:
+    token = request.cookies.get("Authorization")
+
+    return LoginStatus(is_logged_in=verify_auth_token(token))
 
 
 @router.post("/logout")
