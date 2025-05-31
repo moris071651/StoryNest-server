@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from utils.config import POSTGRES_URL
-from psycopg. import 
+from psycopg_pool import ConnectionPool
 
 pool = ConnectionPool(
     POSTGRES_URL,
