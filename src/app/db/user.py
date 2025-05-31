@@ -9,6 +9,13 @@ def get_user_by_email(email: str):
             return curr.fetchone()
 
 
+def get_user_by_name(name: str):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("SELECT id, name, email, password FROM users WHERE name = %s", (name,))
+            return curr.fetchone()
+
+
 def insert_user(name: str, email: str, hashed_pw: str):
     with get_conn() as conn:
         with conn.cursor() as curr:
@@ -19,3 +26,10 @@ def insert_user(name: str, email: str, hashed_pw: str):
             """, (name, email, hashed_pw))
 
             return curr.fetchone()[0]
+
+
+def get_user_by_id(user_id: UUID):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("SELECT id, name, email, password FROM users WHERE id = %s", (str(user_id),))
+            return curr.fetchone()
