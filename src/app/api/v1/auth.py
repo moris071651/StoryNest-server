@@ -75,5 +75,7 @@ def is_logged_in(request: Request) -> LoginStatus:
 
 
 @router.post("/logout")
-def logout():
-    pass
+def logout(response: Response):
+    response.delete_cookie(key="Authorization", httponly=True, samesite="Lax")
+    return {"message": "Logged out"}
+
