@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Path,Request
+from fastapi import APIRouter, Path,Request, Response
 from typing import Union, List
 from services.story import create_story, get_story
 
@@ -45,10 +45,28 @@ def add_story(request: Request, story: StoryCreate) -> StoryInfoOwner:
 
 
 @router.patch("/{story_id}")
-def update_story(story_id: int, update: StoryUpdate) -> StoryInfoOwner:
-    pass
+def update_story(request: Request, story_id: UUID, update: StoryUpdate) -> StoryInfoOwner:
+    token = request.cookies.get('Authorization')
+    user_id = get_auth_user(token)
+    if user_id == None:
+        raise UnauthenticatedUserException()
+
+    return s_update_story(
+        story_id=story_id,
+        user_id=user_id,
+        title=update.title,
+        subtitle=update.subtitle,
+        content=update.content
+    )
 
 
 @router.delete("/{story_id}")
-def delete_story(story_id: int):
-    pass
+def delete_story(request: Request, story_id: UUID):
+    token = request.cookies.get('Authorization')
+    user_id = get_auth_user(token)
+    if user_id == None:
+        raise UnauthenticatedUserException()
+    
+    s_delete_story(story_id, user_id)
+
+

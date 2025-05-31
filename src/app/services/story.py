@@ -51,3 +51,17 @@ def get_story(story_id: UUID, user_id: UUID) -> Union[StoryPublic, StoryOwner]:
             published_at=published_at,
             content=content
         )
+
+
+def s_update_story(
+    story_id: UUID,
+    user_id: UUID,
+    title: Optional[str],
+    subtitle: Optional[str],
+    content: Optional[str]
+) -> StoryInfoOwner:
+    pass
+
+
+def s_delete_story(story_id, user_id):
+    pass
