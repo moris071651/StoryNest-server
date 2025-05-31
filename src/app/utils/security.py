@@ -53,3 +53,26 @@ def verify_auth_token(token: Optional[str]) -> bool:
 
 def get_auth_data(token: str) -> dict:
     return jwt.decode(token, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+
+def get_auth_user(token: str) -> Optional[UUID]:
+    if token == None:
+        return None
+    
+    try:
+        payload: dict = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
+
+        user_id = payload.get("user_id")
+        if not verify_user_id(user_id):
+            return None
+
+        expire_date = payload.get('expire')
+        if not valid_expire_date(expire_date):
+            return None
+        
+        return UUID(user_id)
+
+    except Exception:
+        pass
+
+    return None

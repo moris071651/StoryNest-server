@@ -35,3 +35,21 @@ class InvalidCredentialsException(CustomBaseException):
             "InvalidCredentials",
             "The email or password provided is incorrect."
         )
+
+
+class UnauthenticatedUserException(CustomBaseException):
+    def __init__(self):
+        super().__init__(
+            status.HTTP_401_UNAUTHORIZED,
+            "UnauthenticatedUser",
+            "You must be logged in."
+        )
+
+
+class UnauthorizedOperationException(CustomBaseException):
+    def __init__(self):
+        super().__init__(
+            status.HTTP_401_UNAUTHORIZED,
+            "UnauthorizedOperation",
+            "You are not authorized to access this resource."
+        )
