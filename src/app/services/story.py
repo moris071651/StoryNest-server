@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, Union
 from uuid import UUID
 from schemas.story import StoryInfoOwner, StoryOwner, StoryPublic
-from db.story import get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id
+from db.story import get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id, get_pub_by_id, set_pub_by_id
 from exceptions.story import NoSuchStoryException
 from exceptions.auth import UnauthorizedOperationException
 
@@ -46,14 +46,17 @@ def get_story(story_id: UUID, user_id: UUID) -> Union[StoryPublic, StoryOwner]:
             content=content
         )
     else:
-        return StoryPublic(
-            id=id,
-            title=title,
-            subtitle=subtitle,
-            author_id=author_id,
-            published_at=published_at,
-            content=content
-        )
+        if is_published:
+            return StoryPublic(
+                id=id,
+                title=title,
+                subtitle=subtitle,
+                author_id=author_id,
+                published_at=published_at,
+                content=content
+            )
+        else:
+            raise UnauthorizedOperationException()
 
 
 def s_update_story(
@@ -75,7 +78,7 @@ def s_update_story(
         return None
     
     (id, title, subtitle,
-    content, author_id,is_published,
+    _, _,is_published,
     published_at, created_at, updated_at) = row
 
     return StoryInfoOwner(
@@ -90,11 +93,39 @@ def s_update_story(
 
 
 def s_delete_story(story_id: UUID, user_id: UUID):
-    (author_id,) = get_story_author_by_id(str(story_id))
-    if author_id == None:
+    row = get_story_author_by_id(str(story_id))
+    if row == None:
         raise NoSuchStoryException()
     
-    if author_id != user_id:
+    if row[0] != user_id:
         raise UnauthorizedOperationException()
     
     delete_story_by_id(str(story_id))
+
+
+def get_pub_status(story_id: UUID, user_id: UUID) -> bool:
+    row = get_story_author_by_id(str(story_id))
+    if row == None:
+        raise NoSuchStoryException()
+    
+    (author_id,) = row
+    if author_id != user_id:
+        raise UnauthorizedOperationException()
+    
+    status = get_pub_by_id(str(story_id))
+
+    return status
+
+
+def set_pub_status(user_id: UUID, story_id: UUID, status: bool):
+    row = get_story_author_by_id(str(story_id))
+    if row == None:
+        raise NoSuchStoryException()
+    
+    (author_id,) = row
+    if author_id != user_id:
+        raise UnauthorizedOperationException()
+
+    status = set_pub_by_id(str(story_id), status)
+
+    return status

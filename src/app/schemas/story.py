@@ -38,7 +38,13 @@ class StoryCreate(BaseModel):
     subtitle: OptionalStr = Field(default=None, min_length=1, max_length=255)
     content: OptionalStr = Field(default=None, min_length=1)
 
+
 class StoryUpdate(BaseModel):
     title: OptionalStr = Field(default=None, min_length=1, max_length=255)
     subtitle: OptionalStr = Field(default=None, min_length=1, max_length=255)
     content: OptionalStr = Field(default=None, min_length=1)
+
+
+class PublicationStatus(BaseModel):
+    is_published: bool
+    

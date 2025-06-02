@@ -76,3 +76,31 @@ def delete_story_by_id(story_id):
         with conn.cursor() as curr:
             curr.execute("DELETE FROM stories WHERE id = %s", (str(story_id),))
 
+
+def get_pub_by_id(story_id):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("SELECT is_published FROM stories WHERE id = %s", (str(story_id),))
+
+            row = curr.fetchone()
+            if row != None:
+                return row[0]
+            else:
+                return None
+        
+
+def set_pub_by_id(story_id, status):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("""
+                UPDATE stories
+                SET is_published = %s
+                WHERE id = %s
+                RETURNING is_published
+            """, (status, str(story_id)))
+
+            row = curr.fetchone()
+            if row != None:
+                return row[0]
+            else:
+                return None
