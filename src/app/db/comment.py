@@ -38,3 +38,9 @@ def update_comment_by_id(content: str, comment_id: str):
             """, (content, comment_id))
 
             return curr.fetchone()
+
+def delete_comment_by_id(comment_id: str) -> bool:
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("DELETE FROM comments WHERE id = %s RETURNING id", (comment_id,))
+            return curr.fetchone()

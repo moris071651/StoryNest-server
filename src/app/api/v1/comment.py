@@ -42,7 +42,7 @@ def delete_comment(request: Request, story_id: UUID, comment_id: UUID):
         raise UnauthenticatedUserException()
     
     service.delete_comment(
-        author_id=user_id,
+        user_id=user_id,
         story_id=story_id,
         comment_id= comment_id
     )
@@ -56,7 +56,7 @@ def update_comment(request: Request, story_id: UUID, comment_id: UUID, comment: 
         raise UnauthenticatedUserException()
     
     return service.update_comment(
-        author_id=user_id,
+        user_id=user_id,
         story_id=story_id,
         comment_id= comment_id,
         content=comment.content
