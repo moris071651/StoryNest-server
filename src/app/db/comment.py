@@ -39,8 +39,33 @@ def update_comment_by_id(content: str, comment_id: str):
 
             return curr.fetchone()
 
+
 def delete_comment_by_id(comment_id: str) -> bool:
     with get_conn() as conn:
         with conn.cursor() as curr:
             curr.execute("DELETE FROM comments WHERE id = %s RETURNING id", (comment_id,))
             return curr.fetchone()
+        
+
+def get_comment_by_id(comment_id: str):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("""
+                SELECT id, story_id, author_id, content, created_at, updated_at
+                FROM comments
+                WHERE id = %s
+            """, (comment_id,))
+            return curr.fetchone()
+
+
+def get_comments_by_story_id(story_id: str):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("""
+                SELECT id, story_id, author_id, content, created_at, updated_at
+                FROM comments
+                WHERE story_id = %s
+                ORDER BY created_at ASC
+            """, (story_id,))
+            return curr.fetchall()
+

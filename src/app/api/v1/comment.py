@@ -12,7 +12,7 @@ router = APIRouter(prefix='/stories', tags=["Comments"])
 
 @router.get('/{story_id}/comments/')
 def get_comments(story_id: UUID) -> Comment:
-    pass
+    return service.get_comments(story_id=story_id)
 
 
 @router.post('/{story_id}/comments/')
@@ -30,8 +30,8 @@ def create_comment(request: Request, story_id: UUID, comment: CommentCreate) -> 
 
 
 @router.get('/{story_id}/comments/{comment_id}')
-def get_comment(request: Request, story_id: UUID, comment_id: UUID) -> Comment:
-    pass
+def get_comment(story_id: UUID, comment_id: UUID) -> Comment:
+    return service.get_comment(story_id=story_id, comment_id=comment_id)
 
 
 @router.delete('/{story_id}/comments/{comment_id}')
