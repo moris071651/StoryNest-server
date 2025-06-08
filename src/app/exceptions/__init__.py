@@ -1,7 +1,7 @@
 from functools import wraps
-from fastapi import HTTPException
+from fastapi import HTTPException, Request, Response, status
 from starlette.responses import JSONResponse
-
+from schemas.error import ErrorResponse
 
 class CustomBaseException(Exception):
     def __init__(self, status, message, detail):            
@@ -12,28 +12,23 @@ class CustomBaseException(Exception):
         self.detail = detail
 
 
-def handle_errors(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        
-        except CustomBaseException as e:
-            return JSONResponse(
-                status_code=e.status,
-                content={
-                    "error": e.error,
-                    "detail": e.detail,
-                }
-            )
-        
-        except HTTPException as e:
-            return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
-        
-        except ValueError as e:
-            return JSONResponse(status_code=400, content={"detail": str(e)})
-        
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"error": "Internal Server Error1", "detail": str(e)})
-        
-    return wrapper
+def setup_error_handling(app):
+    @app.exception_handler(CustomBaseException)
+    def handle_server_errors(request: Request, exception: CustomBaseException) -> ErrorResponse:
+        return JSONResponse(
+            status_code=exception.status,
+            content=ErrorResponse(
+                error=exception.error,
+                detail=exception.detail
+            ).model_dump()
+        )
+    
+    @app.exception_handler(Exception)
+    def handle_generic_errors(request: Request, exception: Exception) -> ErrorResponse:
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=ErrorResponse(
+                error="Internal Server Error",
+                detail=str(exception)
+            ).model_dump()
+        )

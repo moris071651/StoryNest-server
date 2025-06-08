@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Body, Request, Response, status
 
-from exceptions import handle_errors
 from utils.security import gen_auth_token
 from utils.security import verify_auth_token
 from utils.config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -14,7 +13,6 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post('/signup', status_code=status.HTTP_201_CREATED)
-@handle_errors
 def signup(request: Request, response: Response, user_credentials: UserCredentials = Body(...)) -> UserInfo:
     token = request.cookies.get("Authorization")
     if token:
@@ -41,7 +39,6 @@ def signup(request: Request, response: Response, user_credentials: UserCredentia
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
-@handle_errors
 def login(request: Request, response: Response, user_credentials: UserCredentials = Body(...)) -> UserInfo:
     token = request.cookies.get("Authorization")
     if verify_auth_token(token):
@@ -67,7 +64,6 @@ def login(request: Request, response: Response, user_credentials: UserCredential
 
 
 @router.get("/login", status_code=status.HTTP_200_OK)
-@handle_errors
 def is_logged_in(request: Request) -> LoginStatus:
     token = request.cookies.get("Authorization")
 

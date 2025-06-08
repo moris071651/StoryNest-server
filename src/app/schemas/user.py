@@ -1,5 +1,5 @@
 from typing import Optional, Annotated
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from uuid import UUID
 
 OptionalEmail = Annotated[Optional[EmailStr], None]
@@ -18,9 +18,9 @@ class UserCredentials(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: OptionalStr
-    email: OptionalEmail
-    password: OptionalStr
+    name: OptionalStr = Field(default=None, min_length=1, max_length=255)
+    email: OptionalEmail = Field(default=None, min_length=1, max_length=255)
+    password: OptionalStr = Field(default=None, min_length=1, max_length=255)
 
 
 class LoginStatus(BaseModel):

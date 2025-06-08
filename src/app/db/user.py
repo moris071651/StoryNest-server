@@ -33,3 +33,48 @@ def get_user_by_id(user_id: UUID):
         with conn.cursor() as curr:
             curr.execute("SELECT id, name, email, password_hash FROM users WHERE id = %s", (str(user_id),))
             return curr.fetchone()
+
+
+def get_all_users():
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("SELECT id, name, email, password_hash FROM users")
+            return curr.fetchall()
+        
+def delete_user_by_id(user_id):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("DELETE FROM users WHERE id = %s", (str(user_id),))
+
+
+def update_user_by_id(story_id, name, email, hashed_pw):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            fields = []
+            values = []
+
+            if name is not None:
+                fields.append("name = %s")
+                values.append(name)
+
+            if email is not None:
+                fields.append("email = %s")
+                values.append(email)
+
+            if hashed_pw is not None:
+                fields.append("password_hash = %s")
+                values.append(hashed_pw)
+
+            if len(fields) == 0:
+                return None
+
+            query = f"""
+                UPDATE users
+                SET {', '.join(fields)}
+                WHERE id = %s
+                RETURNING id, name, email, password_hash
+            """
+
+            values.append(str(story_id))
+            curr.execute(query, values)
+            return curr.fetchone()
