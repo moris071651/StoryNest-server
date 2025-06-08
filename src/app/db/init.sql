@@ -30,6 +30,19 @@ CREATE TABLE IF NOT EXISTS comments (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE TABLE tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE story_tags (
+    story_id UUID NOT NULL,
+    tag_id UUID NOT NULL,
+    PRIMARY KEY (story_id, tag_id),
+    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS comment_ratings (
     comment_id uuid NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
