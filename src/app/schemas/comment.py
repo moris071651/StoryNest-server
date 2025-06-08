@@ -17,6 +17,6 @@ class CommentCreate(BaseModel):
     content: str
 
 
-class CommentUpdate(BaseModel):
-    content: Annotated[Optional[str], None]
+class CommentUpdate(CommentCreate):
+    pass
 

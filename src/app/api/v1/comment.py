@@ -4,7 +4,7 @@ from exceptions.auth import UnauthenticatedUserException
 from utils.security import get_auth_user
 
 from services import comment as service
-from schemas.comment import Comment, CommentCreate
+from schemas.comment import Comment, CommentCreate, CommentUpdate
 
 
 router = APIRouter(prefix='/stories', tags=["Comments"])
@@ -22,11 +22,11 @@ def create_comment(request: Request, story_id: UUID, comment: CommentCreate) -> 
     if user_id == None:
         raise UnauthenticatedUserException()
 
-    new_comment = service.create_comment(
+    return service.create_comment(
+        author_id=user_id,
+        story_id=story_id,
         content=comment.content
     )
-
-    return new_comment
 
 
 @router.get('/{story_id}/comments/{comment_id}')
@@ -40,11 +40,24 @@ def delete_comment(request: Request, story_id: UUID, comment_id: UUID):
     user_id = get_auth_user(token)
     if user_id == None:
         raise UnauthenticatedUserException()
+    
+    service.delete_comment(
+        author_id=user_id,
+        story_id=story_id,
+        comment_id= comment_id
+    )
 
 
 @router.patch('/{story_id}/comments/{comment_id}')
-def update_comment(request: Request, story_id: UUID, comment_id: UUID):
+def update_comment(request: Request, story_id: UUID, comment_id: UUID, comment: CommentUpdate):
     token = request.cookies.get('Authorization')
     user_id = get_auth_user(token)
     if user_id == None:
         raise UnauthenticatedUserException()
+    
+    return service.update_comment(
+        author_id=user_id,
+        story_id=story_id,
+        comment_id= comment_id,
+        content=comment.content
+    )

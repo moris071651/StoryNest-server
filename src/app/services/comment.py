@@ -1,11 +1,15 @@
+from typing import Optional
 from uuid import UUID
 from schemas.comment import Comment
 
 from db import comment as repo
 
+def get_comment(user_id: UUID, story_id: UUID, comment_id: UUID, check: bool = True):
+    pass
 
-def create_comment(content: str, author_id: UUID) -> Comment:
-    row = repo.insert_comment(content, str(author_id))
+
+def create_comment(content: str, author_id: UUID, story_id: UUID) -> Comment:
+    row = repo.insert_comment(content, str(author_id), str(story_id))
     if row == None:
         raise Exception()
     
