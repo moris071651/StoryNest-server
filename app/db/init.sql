@@ -30,12 +30,12 @@ CREATE TABLE IF NOT EXISTS comments (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE tags (
+CREATE TABLE IF NOT EXISTS tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE story_tags (
+CREATE TABLE IF NOT EXISTS story_tags (
     story_id UUID NOT NULL,
     tag_id UUID NOT NULL,
     PRIMARY KEY (story_id, tag_id),

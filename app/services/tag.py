@@ -5,6 +5,7 @@ from exceptions.story import NoSuchStoryException
 from schemas.tag import Tags
 from db import tag as repo
 
+
 def get_all_tags() -> Tags:
     rows = repo.get_all_tags()
     return Tags(tags=[row[0] for row in rows])

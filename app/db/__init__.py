@@ -15,7 +15,7 @@ def get_conn():
         yield conn
 
 
-with open("src/app/db/init.sql") as f:
+with open("app/db/init.sql") as f:
     with get_conn() as conn:
         with conn.cursor() as curr:
             curr.execute(f.read())
