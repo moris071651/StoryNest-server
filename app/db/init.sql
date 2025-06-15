@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS stories (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     title text NOT NULL,
-    subtitle text NOT NULL,
+    subtitle text NULL,
     content text NOT NULL,
     author_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     is_published boolean NOT NULL DEFAULT false,

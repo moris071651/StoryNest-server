@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import Optional
+from fastapi import Request
 from jose import jwt
+from exceptions.auth import UnauthenticatedUserException
 from utils.config import JWT_SECRET, JWT_ALGORITHM
 from services.user import verify_user_id
 from uuid import UUID
@@ -76,3 +78,13 @@ def get_auth_user(token: str) -> Optional[UUID]:
         pass
 
     return None
+
+
+def auth_user(request: Request):
+    token = request.cookies.get('Authorization')
+    user_id = get_auth_user(token)
+
+    if user_id == None:
+        raise UnauthenticatedUserException()
+    
+    return user_id

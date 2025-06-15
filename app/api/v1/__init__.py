@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.v1 import auth, story, publication, user, comment, tag
+from . import auth, story, publication, user, comment, tag
 
 router = APIRouter(prefix='/v1')
 

@@ -14,9 +14,13 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post('/signup', status_code=status.HTTP_201_CREATED)
 def signup(request: Request, response: Response, user_credentials: UserCredentials = Body(...)) -> UserInfo:
+    print(user_credentials)
+    print(request.cookies)
+
     token = request.cookies.get("Authorization")
     if token:
         raise AuthTokenProvidedException()
+    
 
     expire_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -71,7 +75,8 @@ def is_logged_in(request: Request) -> LoginStatus:
 
 
 @router.post("/logout")
-def logout(response: Response):
+def logout(request: Request, response: Response):
     response.delete_cookie(key="Authorization", httponly=True, samesite="Lax")
+    print(request.cookies)
     return {"message": "Logged out"}
 
