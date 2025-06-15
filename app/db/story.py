@@ -104,3 +104,11 @@ def set_pub_by_id(story_id, status):
                 return row[0]
             else:
                 return None
+
+def get_stories_by_owner_id(author_id):
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("""SELECT id, title, subtitle, is_published, published_at, created_at, updated_at
+                            FROM stories WHERE author_id = %s""", (str(author_id),))
+
+            return curr.fetchall()

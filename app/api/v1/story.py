@@ -1,8 +1,7 @@
 from uuid import UUID
 from fastapi import APIRouter, Path, Request, Response
 from typing import Union, List
-from services.story import create_story, get_story, s_delete_story, s_update_story
-
+from services import story as service
 
 from utils.security import get_auth_user
 from exceptions.auth import UnauthenticatedUserException
@@ -22,7 +21,7 @@ def get_story_content(request: Request, story_id: UUID = Path(...)) -> Union[Sto
     token = request.cookies.get('Authorization')
     user_id = get_auth_user(token)
 
-    return get_story(story_id, user_id)
+    return service.get_story(story_id, user_id)
 
 
 @router.post("/")
@@ -32,7 +31,7 @@ def add_story(request: Request, story: StoryCreate) -> StoryInfoOwner:
     if user_id == None:
         raise UnauthenticatedUserException()
     
-    new_story = create_story(
+    new_story = service.create_story(
         title=story.title,
         subtitle=story.subtitle,
         content=story.content,
@@ -49,7 +48,7 @@ def update_story(request: Request, story_id: UUID, update: StoryUpdate) -> Story
     if user_id == None:
         raise UnauthenticatedUserException()
 
-    return s_update_story(
+    return service.update_story(
         story_id=story_id,
         user_id=user_id,
         title=update.title,
@@ -65,6 +64,6 @@ def delete_story(request: Request, story_id: UUID):
     if user_id == None:
         raise UnauthenticatedUserException()
     
-    s_delete_story(story_id, user_id)
+    service.delete_story(story_id, user_id)
 
 

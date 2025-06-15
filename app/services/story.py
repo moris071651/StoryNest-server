@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Optional, Union
+from typing import List, Optional, Union
 from uuid import UUID
-from schemas.story import StoryInfoOwner, StoryOwner, StoryPublic
-from db.story import get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id, get_pub_by_id, set_pub_by_id
+from schemas.story import StoryInfoOwner, StoryInfoPublic, StoryOwner, StoryPublic
+from db.story import get_stories_by_owner_id, get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id, get_pub_by_id, set_pub_by_id
 from exceptions.story import NoSuchStoryException
 from exceptions.auth import UnauthorizedOperationException
 
@@ -59,7 +59,7 @@ def get_story(story_id: UUID, user_id: UUID) -> Union[StoryPublic, StoryOwner]:
             raise UnauthorizedOperationException()
 
 
-def s_update_story(
+def update_story(
     story_id: UUID,
     user_id: UUID,
     title: Optional[str],
@@ -92,7 +92,7 @@ def s_update_story(
     )
 
 
-def s_delete_story(story_id: UUID, user_id: UUID):
+def delete_story(story_id: UUID, user_id: UUID):
     row = get_story_author_by_id(str(story_id))
     if row == None:
         raise NoSuchStoryException()
@@ -129,3 +129,34 @@ def set_pub_status(user_id: UUID, story_id: UUID, status: bool):
     status = set_pub_by_id(str(story_id), status)
 
     return status
+
+def get_user_story(user_id: UUID, is_owner: bool) -> Union[List[StoryInfoPublic], List[StoryInfoOwner]]:
+    rows = get_stories_by_owner_id(str(user_id))
+    if rows == None:
+        raise Exception()
+    
+    if is_owner:
+        return [
+            StoryInfoOwner(
+                id=id,
+                title=title,
+                subtitle=subtitle,
+                is_published=is_published,
+                published_at=published_at,
+                created_at=created_at,
+                updated_at=updated_at
+            )
+            for id, title, subtitle, is_published, published_at, created_at, updated_at in rows
+        ]
+    
+    else:
+        return [
+            StoryInfoPublic(
+                id=id,
+                title=title,
+                subtitle=subtitle,
+                published_at=published_at,
+            )
+            for id, title, subtitle, is_published, published_at, _, _ in rows
+            if is_published is True
+        ]
