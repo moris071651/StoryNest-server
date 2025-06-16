@@ -2,7 +2,6 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 from jose import jwt
-from unittest.mock import patch
 
 from app.utils.sec import (
     valid_expire_date,
@@ -47,19 +46,16 @@ def test_gen_auth_token_returns_jwt(user_id, expire_date):
     assert payload["expire"] == expire_date.isoformat()
 
 
-@patch("utils.security.verify_user_id", return_value=True)
 def test_verify_auth_token_valid(mock_verify_user_id, user_id, expire_date):
     token = gen_auth_token(user_id, expire_date)
     assert verify_auth_token(token) == True
 
 
-@patch("utils.security.verify_user_id", return_value=False)
 def test_verify_auth_token_invalid_user(mock_verify_user_id, user_id, expire_date):
     token = gen_auth_token(user_id, expire_date)
     assert verify_auth_token(token) == False
 
 
-@patch("utils.security.verify_user_id", return_value=True)
 def test_verify_auth_token_expired(mock_verify_user_id, user_id):
     expired = datetime.now(timezone.utc) - timedelta(minutes=5)
     token = gen_auth_token(user_id, expired)
@@ -72,14 +68,12 @@ def test_get_auth_data(user_id, expire_date):
     assert data["user_id"] == str(user_id)
 
 
-@patch("utils.security.verify_user_id", return_value=True)
 def test_get_auth_user_valid(mock_verify_user_id, user_id, expire_date):
     token = gen_auth_token(user_id, expire_date)
     result = get_auth_user(token)
     assert result == user_id
+    
 
-
-@patch("utils.security.verify_user_id", return_value=False)
 def test_get_auth_user_invalid_user(mock_verify_user_id, user_id, expire_date):
     token = gen_auth_token(user_id, expire_date)
     assert get_auth_user(token) is None
