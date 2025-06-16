@@ -11,7 +11,7 @@ router = APIRouter(prefix='/stories', tags=["Comments"])
 
 
 @router.get('/{story_id}/comments/')
-def get_comments(story_id: UUID) -> Comment:
+def get_comments(story_id: UUID) -> list[Comment]:
     return service.get_comments(story_id=story_id)
 
 

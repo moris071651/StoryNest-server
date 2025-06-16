@@ -13,7 +13,7 @@ router = APIRouter(prefix='/stories', tags=["Stories"])
 
 @router.get("/")
 def list_stories() -> List[StoryInfoPublic]:
-    pass
+    return service.get_pub_stories()
 
 
 @router.get("/{story_id}")

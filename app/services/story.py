@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional, Union
 from uuid import UUID
 from schemas.story import StoryInfoOwner, StoryInfoPublic, StoryOwner, StoryPublic
-from db.story import get_stories_by_owner_id, get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id, get_pub_by_id, set_pub_by_id
+from db.story import get_stories, get_stories_by_owner_id, get_story_author_by_id, insert_story, get_story_by_id, delete_story_by_id, update_story_by_id, get_pub_by_id, set_pub_by_id
 from exceptions.story import NoSuchStoryException
 from exceptions.auth import UnauthorizedOperationException
 
@@ -57,6 +57,24 @@ def get_story(story_id: UUID, user_id: UUID) -> Union[StoryPublic, StoryOwner]:
             )
         else:
             raise UnauthorizedOperationException()
+        
+
+def get_pub_stories() -> List[StoryInfoPublic]:
+    rows = get_stories()
+    if rows == None:
+        raise Exception()
+    
+    return [
+        StoryInfoPublic(
+            id=id,
+            title=title,
+            subtitle=subtitle,
+            published_at=published_at,
+            author_id=author_id
+        )
+        for id, title, subtitle, published_at, author_id in rows
+    ]
+
 
 
 def update_story(

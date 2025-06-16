@@ -112,3 +112,11 @@ def get_stories_by_owner_id(author_id):
                             FROM stories WHERE author_id = %s""", (str(author_id),))
 
             return curr.fetchall()
+
+def get_stories():
+    with get_conn() as conn:
+        with conn.cursor() as curr:
+            curr.execute("""SELECT id, title, subtitle, published_at, author_id
+                            FROM stories WHERE is_published = TRUE""")
+
+            return curr.fetchall()
