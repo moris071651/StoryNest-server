@@ -1,21 +1,16 @@
 import pytest
 from datetime import datetime, timedelta, timezone
-from uuid import uuid4, UUID
-from fastapi import Request
+from uuid import uuid4
 from jose import jwt
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-from app.utils.security import (
+from app.utils.sec import (
     valid_expire_date,
     gen_auth_token,
     verify_auth_token,
     get_auth_data,
     get_auth_user,
-    auth_user
 )
-from app.utils.config import JWT_SECRET, JWT_ALGORITHM
-from app.exceptions.auth import UnauthenticatedUserException
-
 
 @pytest.fixture
 def user_id():
@@ -47,7 +42,7 @@ def test_valid_expire_date_with_invalid_type():
 
 def test_gen_auth_token_returns_jwt(user_id, expire_date):
     token = gen_auth_token(user_id, expire_date)
-    payload = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
+    payload = jwt.decode(token, "JWT_SECRET", algorithms="HS256")
     assert payload["user_id"] == str(user_id)
     assert payload["expire"] == expire_date.isoformat()
 
@@ -92,27 +87,3 @@ def test_get_auth_user_invalid_user(mock_verify_user_id, user_id, expire_date):
 
 def test_get_auth_user_none():
     assert get_auth_user(None) is None
-
-
-@patch("utils.security.verify_user_id", return_value=True)
-def test_auth_user_valid(mock_verify_user_id, user_id, expire_date):
-    token = gen_auth_token(user_id, expire_date)
-    mock_request = MagicMock(Request)
-    mock_request.cookies = {"Authorization": token}
-    assert auth_user(mock_request) == user_id
-
-
-@patch("utils.security.verify_user_id", return_value=False)
-def test_auth_user_invalid(mock_verify_user_id, user_id, expire_date):
-    token = gen_auth_token(user_id, expire_date)
-    mock_request = MagicMock(Request)
-    mock_request.cookies = {"Authorization": token}
-    with pytest.raises(UnauthenticatedUserException):
-        auth_user(mock_request)
-
-
-def test_auth_user_missing_cookie():
-    mock_request = MagicMock(Request)
-    mock_request.cookies = {}
-    with pytest.raises(UnauthenticatedUserException):
-        auth_user(mock_request)

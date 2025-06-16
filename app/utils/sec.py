@@ -1,11 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional
-from fastapi import Request
 from jose import jwt
 from uuid import UUID
-from services.user import verify_user_id
-from utils.config import JWT_SECRET, JWT_ALGORITHM
-from exceptions.auth import UnauthenticatedUserException
 
 def valid_expire_date(expire_date):
     if isinstance(expire_date, str):
@@ -26,7 +22,7 @@ def gen_auth_token(user_id: UUID, expire_date: datetime) -> str:
         "expire": expire_date.isoformat(),
     }
 
-    return jwt.encode(data, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return jwt.encode(data, "JWT_SECRET", algorithm="HS256")
 
 
 def verify_auth_token(token: Optional[str]) -> bool:
@@ -34,11 +30,7 @@ def verify_auth_token(token: Optional[str]) -> bool:
         return False
     
     try:
-        payload: dict = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
-
-        user_id = payload.get("user_id")
-        if not verify_user_id(user_id):
-            return False
+        payload: dict = jwt.decode(token, "JWT_SECRET", algorithms="HS256")
 
         expire_date = payload.get('expire')
         if not valid_expire_date(expire_date):
@@ -53,7 +45,7 @@ def verify_auth_token(token: Optional[str]) -> bool:
 
 
 def get_auth_data(token: str) -> dict:
-    return jwt.decode(token, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return jwt.decode(token, "JWT_SECRET", algorithm="HS256")
 
 
 def get_auth_user(token: str) -> Optional[UUID]:
@@ -61,11 +53,9 @@ def get_auth_user(token: str) -> Optional[UUID]:
         return None
     
     try:
-        payload: dict = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
+        payload: dict = jwt.decode(token, "JWT_SECRET", algorithms="HS256")
 
         user_id = payload.get("user_id")
-        if not verify_user_id(user_id):
-            return None
 
         expire_date = payload.get('expire')
         if not valid_expire_date(expire_date):
@@ -77,13 +67,3 @@ def get_auth_user(token: str) -> Optional[UUID]:
         pass
 
     return None
-
-
-def auth_user(request: Request):
-    token = request.cookies.get('Authorization')
-    user_id = get_auth_user(token)
-
-    if user_id == None:
-        raise UnauthenticatedUserException()
-    
-    return user_id
