@@ -1,10 +1,11 @@
 version: '3.8'
 
 services:
-  web:
+  backend:
     build:
       context: .
     container_name: ServerNest
+    restart: unless-stopped
     volumes:
       - .:/app
     ports:
@@ -13,19 +14,25 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
     depends_on:
       - db
+    networks:
+      - db-network
 
   db:
     image: postgres:15
     container_name: postgres_db
-    restart: always
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: app_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    networks:
+      - db-network
 
 volumes:
   postgres_data:
+
+networks:
+  db-network:
+    driver: bridge
