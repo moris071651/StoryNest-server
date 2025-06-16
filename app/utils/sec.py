@@ -45,7 +45,7 @@ def verify_auth_token(token: Optional[str]) -> bool:
 
 
 def get_auth_data(token: str) -> dict:
-    return jwt.decode(token, "JWT_SECRET", algorithm="HS256")
+    return jwt.decode(token, "JWT_SECRET", algorithms="HS256")
 
 
 def get_auth_user(token: str) -> Optional[UUID]:
