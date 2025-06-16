@@ -2,11 +2,15 @@ from datetime import datetime, timezone
 from typing import Optional
 from fastapi import Request
 from jose import jwt
-from exceptions.auth import UnauthenticatedUserException
-from utils.config import JWT_SECRET, JWT_ALGORITHM
 from services.user import verify_user_id
 from uuid import UUID
 
+try:
+    from exceptions.auth import UnauthenticatedUserException
+    from utils.config import JWT_SECRET, JWT_ALGORITHM
+except Exception:
+    from app.exceptions.auth import UnauthenticatedUserException
+    from app.utils.config import JWT_SECRET, JWT_ALGORITHM
 
 def valid_expire_date(expire_date):
     if isinstance(expire_date, str):
