@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 from datetime import datetime, timedelta, timezone
 
-import app
 from app.main import app
 from app.utils.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
