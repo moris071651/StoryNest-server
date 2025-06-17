@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api import v1
+from api import v1
 
 router = APIRouter(prefix='/api')
 
