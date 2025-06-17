@@ -1,6 +1,7 @@
-# StoryNest
+# StoryNest (Server)
 
 **StoryNest** is a platform for creative writers to share their stories and ideas in a supportive community. Whether you're polishing a novel or sharing a quick tale, StoryNest gives you the tools to write, edit, and receive feedback.
+
 
 ## Features
 
@@ -13,8 +14,8 @@
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/moris071651/StoryNest.git
-    cd StoryNest
+    git clone https://github.com/moris071651/StoryNest-server.git
+    cd StoryNest-server
     ```
 
 2. Run the application with Docker Compose:
@@ -23,7 +24,7 @@
    docker-compose up --build
    ```
 
-3. Visit [http://localhost:5173](http://localhost:5173) to explore StoryNest!
+3. Visit [http://localhost:8000/docs](http://localhost:8000/docs) to explore StoryNest API!
    
 4. *Happy writing, and welcome to the nest!*
 
@@ -32,7 +33,6 @@
 * Python / FastAPI (backend)
 * PostgreSQL (database)
 * Docker / Docker Compose
-* JSX / ReactJS (frontend)
 
 ## License
 
